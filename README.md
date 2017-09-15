@@ -1,5 +1,10 @@
 # Predix Steam Locomotive NodeJS Simulation
 
+## About 
+Build by [dcp](https://www.topcoder.com/members/dcp/) on topcoder.com 
+Challenge Details: https://www.topcoder.com/challenge-details/30058353/?type=develop&noncache=true
+
+
 ## Pre-steps
 * Check [Predix Status Page](https://status.predix.io/) to review any possible Predix outages.
   * If Cloud Foundry is down (or in a degraded state), you will not be able to run the setup utility in this
