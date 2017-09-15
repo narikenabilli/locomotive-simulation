@@ -1,0 +1,43 @@
+{
+  "scope": [
+    "uaa.none",
+    "openid"
+  ],
+  "client_id": "<client_id>",
+  "client_secret": "<client_secret>",
+  "resource_ids": [
+    "none"
+  ],
+  "authorized_grant_types": [
+    "refresh_token",
+    "client_credentials",
+    "password",
+    "authorization_code"
+  ],
+  "autoapprove": [
+    "openid"
+  ],
+  "authorities": [
+    "uaa.resource",
+    "openid",
+    "uaa.none",
+    "timeseries.zones.<time_series_service_instance_guid>.query",
+    "timeseries.zones.<time_series_service_instance_guid>.ingest",
+    "timeseries.zones.<time_series_service_instance_guid>.user",
+    "predix-asset.zones.<asset_service_instance_guid>.user"
+  ],
+  "services": [
+    {
+      "instanceId": "<time_series_service_instance_guid>",
+      "serviceId": "timeseries",
+      "trustedIssuerUrl": "<predix_uaa_url>/oauth/token",
+      "instanceName": "<time_series_service_instance>"
+    },
+    {
+      "instanceId": "<asset_service_instance_guid>",
+      "serviceId": "predix-asset",
+      "trustedIssuerUrl": "<predix_uaa_url>/oauth/token",
+      "instanceName": "<asset_service_instance>"
+    }
+  ]
+}

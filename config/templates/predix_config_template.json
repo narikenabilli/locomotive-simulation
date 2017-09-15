@@ -1,0 +1,19 @@
+{
+  "api": "https://api.system.aws-usw02-pr.ice.predix.io",
+  "space": "dev",
+  "plan": "Free",
+  "org": "<use_login_id>",
+  "uaa_service_instance_guid": "<not-set>",
+  "uaa_url_template": "https://<guid>.predix-uaa.run.aws-usw02-pr.ice.predix.io",
+  "uaa_service_instance": "tc_loco_uaa",
+  "uaa_admin_client_secret": "tc_secret",
+  "time_series_service_instance": "tc_loco_time_series",
+  "time_series_service_instance_guid": "<not-set>",
+  "time_series_websocket_url": "wss://gateway-predix-data-services.run.aws-usw02-pr.ice.predix.io/v1/stream/messages",
+  "time_series_url": "https://time-series-store-predix.run.aws-usw02-pr.ice.predix.io/v1/",
+  "asset_service_instance_guid": "<not-set>",
+  "asset_service_instance": "tc_loco_asset",
+  "asset_service_url": "https://predix-asset.run.aws-usw02-pr.ice.predix.io/",
+  "client_id": "tc_client",
+  "client_secret": "tc_client_secret"
+}

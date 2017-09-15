@@ -1,0 +1,44 @@
+{
+  "name": "steam_locomotive_simulation",
+  "version": "1.0.0",
+  "description": "TopCoder Steam Locomotive Simulation",
+  "main": "app.js",
+  "scripts": {
+    "app": "rimraf ./build && babel src -d build && node build/app.js",
+    "debug-app": "rimraf ./build && babel src -d build && node --inspect --debug-brk build/app.js",
+    "setup": "rimraf ./build && babel src -d build && node build/setup",
+    "cleanup": "rimraf ./build && babel src -d build && node build/setup --cleanup",
+    "verify": "rimraf ./build && babel src -d build && node build/verification",
+    "lint": "eslint -c .eslintrc.json --ignore-path .eslintignore src config setup app.js --fix || true",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "TCSCODER",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "command-exists": "^1.2.2",
+    "get-parameter-names": "^0.3.0",
+    "https-proxy-agent": "^2.0.0",
+    "jsonfile": "^3.0.1",
+    "lodash": "^4.17.4",
+    "predix-uaa-client": "^1.2.2",
+    "readline-sync": "^1.4.7",
+    "superagent": "^3.5.2",
+    "superagent-proxy": "^1.0.2",
+    "url": "^0.11.0",
+    "winston": "^2.3.1",
+    "ws": "^3.0.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb": "^15.0.1",
+    "eslint-loader": "^1.8.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-jsx-a11y": "^5.0.1",
+    "eslint-plugin-react": "^7.1.0",
+    "rimraf": "^2.6.1"
+  }
+}

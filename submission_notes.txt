@@ -1,0 +1,139 @@
+-----------------------------------------------
+Video Location: https://youtu.be/BwosQeOJgVs
+note: audio is included with the video, so make
+      sure your speakers/headphones are on
+-----------------------------------------------
+
+-----------------------------------------------
+Problems?
+-----------------------------------------------
+If you have any problems setting up the services, etc. please post in forum and I'll be glad
+to try to help. If you can post the logs of any errors, that would be helpful as well.
+
+-----------------------------------------------
+Enhancements
+-----------------------------------------------
+* Application works even if behind corporate proxy
+* Code works on both Windows and non Windows operating systems (tested on Mac Sierra and Windows 7)
+* Fully automated setup utility for Predix written in javascript as noted in
+  forum: https://apps.topcoder.com/forums/?module=Thread&threadID=903729&start=9
+* Verification utility for data sent to Predix services, also written in javascript
+  - This utility will allow you to generate all data sent to Predix services to files so you can easily
+    verify the data.
+
+-----------------------------------------------
+Detailed Verification Steps
+-----------------------------------------------
+~~~~~~~~~~~~~~~~~~~
+Basic Verification
+~~~~~~~~~~~~~~~~~~~
+* Ensure you have set up the Predix services using `npm run setup`.
+* Run the simulator using `npm run app`.
+* The default simulator_constants file is configured to run for 100,000 iterations
+  (refer to NUM_ITERATIONS value).
+* There are constants for the asset values: MAX_ALLOWED_SPEED, MAX_ALLOWED_PRESSURE,
+  and MIN_ALLOWED_FUEL_MASS_IN_TENDER
+* The application will check the states to ensure speed, pressure and fuel in the
+  tender are within the proper ranges for these constants and if not, an asset alert
+  will be sent.
+* If you run the simulator with the default values, you should get something similar to
+  this (see below) at the end of the output:
+    info: ----------- SIMULATION COMPLETE ----------
+    info: total time series states sent to predix = 100
+    info: total asset requests sent to predix = {"pressure":91,"speed":6,"fuelMassInTender":2}
+* The maximum amount of requests that can be sent to Predix for any one simulation run
+  is controlled by the MAX_NUM_SENDS_PER_KEY constant. It defaults to 100.
+    - So for time series, it means we can send a maximum of 100 data points for each state's
+      value (e.g. speed, pressure, etc.).
+    - For asset, it means we can send a maximum of 100 alerts for each asset, where an asset
+      is a state value like speed, pressure, fuelMassInTender, etc.
+* You can also view these results by looking at the ./logs/simulator.log file.
+* After running the simulator, you can use `npm run verify` to view the data sent to Predix
+  for time series and asset.
+* You can verify that the expected amount of data was sent to Predix by examining the counts.
+  For example, if I choose option #1 from the menu, I'll get something like this (see below),
+  which confirms that 100 data point values were sent for each state variable:
+    -------------------------------------------------------------
+    Tag                                   Num Data Points Written
+    -------------------------------------------------------------
+    distance                              100
+    fuelMassBurning                       100
+    fuelMassInFireChamber                 100
+    fuelMassInTender                      100
+    pressure                              100
+    speed                                 100
+    time                                  100
+* For the asset alerts, you can use the other options on the menu and confirm the correct number
+  of asset messages were loaded to Predix.
+* For example, if I run option 3, I'll get something like this (see below):
+    'pressure' asset data written successfully to ./logs/asset_pressure.log.
+    91 records were written.
+* We can compare these amounts to the amount the simulator reported were sent to make sure they
+  match (see the end of ./logs/simulator.log to get the amounts).
+* The verification utility also writes out the actual data values for time series and asset to
+  log files in the ./logs file, so you can see the actual data sent by looking at those files.
+~~~~~~~~~~~~~~~~~~~~~
+Advanced Verification
+~~~~~~~~~~~~~~~~~~~~~
+* You can also verify that all data is sent properly in the event of a network failure.
+* To do this, you'll need to start the simulator using `npm run app`, and while the simulator
+  is running, you can disable your network connection temporarily.
+* You can view the console and see that exceptions are being generated (this output is also
+  written to the simulator.log).
+* You can re-enable your network connection while the simulator is still running, then wait
+  for a bit, and all data should eventually get loaded to Predix. You'll be able to verify this
+  by using the same steps as above.
+* If you want to perform this test with no data previous loaded to the services, then you can
+  delete the existing services using `npm run cleanup`, then run `npm run setup` and finally,
+  run `npm run app`.
+
+-----------------------------------------------
+Timestamp considerations
+-----------------------------------------------
+* For timestamps, I used timestamps starting at 0, and this approach was approved by co-pilot
+  here: https://apps.topcoder.com/forums/?module=Thread&threadID=903563&start=0
+* The advantage of this approach is that we always generate the same timestamps (unless DT constant
+  is changed) so it makes verification much easier since there is a fixed amount of data to verify, even
+  if the simulator is run multiple times.
+* The other reason I chose this approach is because Predix limits Time Series to 100K data points on its
+  Free plan (https://www.predix.io/services/service.html?id=1177)
+  - By using the same timestamps each time, we ensure we don't use up all the available data points.
+  - In other words, if we use real timestamps based on current time, we will consume new data points since
+    they will have different timestamps each simulator run. Since we use the same timestamps each simulator run,
+    we only consume a fixed amount of data points (e.g. we are just overwriting previously sent data points).
+
+-----------------------------------------------
+Is the simulation data realistic?
+-----------------------------------------------
+* One of the requirements from the challenge was to make the results of the simulation make sense:
+  "we don’t want to see the locomotive going faster than a brand-new Ferrari car"
+* I researched train speeds and found some info here:
+  - https://en.wikipedia.org/wiki/Rail_speed_limits_in_the_United_States
+  - From that link, if we consider an "average" train to be a Class 4 train, then its max speed would
+    be 97 km/hr.
+  - 97 km/hr = 26.9444 m/s
+  - If you notice the MAX_ALLOWED_SPEED constant in the simulator_constants file, you'll see
+    it is 27.41731 m/s, which seems to be a reasonable amount based on this data.
+* For pressure, see this link: https://en.wikipedia.org/wiki/High-pressure_steam_locomotive
+  - "In the later years of steam, boiler pressures were typically 200 to 250 psi (1.38 to 1.72 MPa).
+     High-pressure locomotives can be considered to start at 350 psi (2.41 MPa), when special construction
+     techniques become necessary, but some had boilers that operated at over 1,500 psi (10.34 MPa)."
+  - If you notice the MAX_ALLOWED_PRESSURE constant in the simulator_constants file, you'll see
+    it is 21.800000000007 bar, which is 316.18 psi.  So the 316.18 falls between the 200-1500 psi range
+    mentioned in the link (there's obviously a wide range here).
+* Finally, for acceleration, I found some helpful info here:
+  - https://www.trainsim.com/vbts/showthread.php?204000-Question-for-real-engineers-about-rates-of-acceleration
+  - From that link, one of the posts said this: "Assuming constant acceleration (which of course is a simplification),
+    the latter translates into an EMU accelerating from standstill to 60mph in 21 seconds"
+  - If you edit the simulator_constants file and change LOG_INTERVAL to 1 and change NUM_ITERATIONS to 210 and
+    re-run the simulator using `npm run app`, you can see what the speed is at time 20 (show below):
+          2017-08-01T00:05:52.168Z - debug: state = {"distance":516.8071558947858,
+          "fuelMassBurning":10.000000000000073,"fuelMassInTender":12669,"fuelMassInFireChamber":10.000000000000073,
+          "locomotiveOwnMass":500000,"pressure":20.200000000000145,"speed":27.273787208056945,
+          "time":21.00000000000003}
+  - So speed at 20.2 seconds is 27.273 m/s, and 27.273 m/s = 61.0079635 mph, which is very close to the value
+    mentioned in the link.
+
+
+
+
